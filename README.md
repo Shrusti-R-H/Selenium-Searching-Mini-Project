@@ -20,9 +20,12 @@ Technologies Used
 - Maven (optional for dependency management)
 
 
+
+
+
   Setup Instructions
 
-  1) Prerequisites
+  1)Prerequisites
 
 - Install [Java JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
 - Install [Chrome browser](https://www.google.com/chrome/)
@@ -33,6 +36,9 @@ Technologies Used
 
 - Place `chromedriver.exe` in the `drivers/` folder
 - In `LinkedInScraper.java`, update the following line with your ChromeDriver path: java System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
+
+
+
 
   How to Run
 
