@@ -1,0 +1,71 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
+
+public class LinkedInScraper {
+
+    public static void main(String[] args) {
+        // Set the path to your ChromeDriver
+        System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
+
+        // Initialize WebDriver
+        WebDriver driver = new ChromeDriver();
+
+        try {
+            // Setup explicit wait
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            // Step 1: Open LinkedIn login page
+            driver.get("https://www.linkedin.com/login");
+
+            // Step 2: Enter login credentials
+            WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("username")));
+            usernameField.sendKeys("sirishamudumanchi12@gmail.com");
+
+            WebElement passwordField = driver.findElement(By.id("password"));
+            passwordField.sendKeys("Siri@8919735982");
+
+            WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit']"));
+            loginButton.click();
+
+            // Step 3: Navigate to search results for "hospitals"
+            wait.until(ExpectedConditions.urlContains("/feed"));
+            driver.get("https://www.linkedin.com/search/results/people/?keywords=hospitals");
+
+            // Step 4: Wait and scrape names
+            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                    By.cssSelector("span.entity-result__title-text > a > span[aria-hidden='true']")
+            ));
+
+            List<WebElement> nameElements = driver.findElements(
+                    By.cssSelector("span.entity-result__title-text > a > span[aria-hidden='true']")
+            );
+
+            // Step 5: Write names to a CSV file
+            try (FileWriter writer = new FileWriter("output.csv")) {
+                writer.write("Name\n");
+                for (WebElement nameElement : nameElements) {
+                    String name = nameElement.getText().trim();
+                    System.out.println("Found: " + name);
+                    writer.write(name + "\n");
+                }
+            }
+
+            System.out.println(" Scraping completed. Data saved to output.csv");
+
+        } catch (Exception e) {
+            System.err.println(" Error occurred: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            driver.quit(); // Clean up
+        }
+    }
+}
